@@ -1,0 +1,43 @@
+{
+  "name": "node-html-emails",
+  "version": "1.0.0",
+  "description": "Localized HTML emails for node",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "bash scripts/build-ts.sh",
+    "watch": "npm run build -- --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jim-y/node-html-emails.git"
+  },
+  "keywords": [
+    "email",
+    "node",
+    "localized",
+    "html",
+    "templates",
+    "mailer"
+  ],
+  "author": "Attila Kling",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jim-y/node-html-emails/issues"
+  },
+  "homepage": "https://github.com/jim-y/node-html-emails#readme",
+  "devDependencies": {
+    "typescript": "^2.9.2"
+  },
+  "dependencies": {
+    "@types/debug": "0.0.30",
+    "@types/glob": "^5.0.35",
+    "@types/handlebars": "^4.0.38",
+    "@types/i18n": "^0.8.3",
+    "debug": "^3.1.0",
+    "glob": "^7.1.2",
+    "handlebars": "^4.0.11",
+    "i18n": "^0.8.3",
+    "juice": "^4.3.1"
+  }
+}
