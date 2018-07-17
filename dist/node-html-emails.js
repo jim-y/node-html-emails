@@ -6,20 +6,37 @@ const juice = require("juice");
 const glob = require("glob");
 const path = require("path");
 const fs = require("fs");
-const debug = require("debug");
-debug('node-html-emails');
+const debugCb = require("debug");
+const debug = debugCb('node-html-emails');
 class NodeHtmlEmails {
-    constructor(config, options) {
+    constructor(config, _options) {
         this.config = config;
-        this.options = options;
+        this._options = _options;
         this.layouts = {};
         this.partials = {};
         this.coreCss = fs.readFileSync(path.join(__dirname, './core.css'));
+        this.defaultOptions = {
+            layouts: {
+                pattern: '*.layout.hbs'
+            },
+            partials: {
+                pattern: '*.partial.hbs'
+            }
+        };
+        this.options = Object.assign(_options, this.defaultOptions);
+        this.initLocales();
         this.registerHelpers();
         this.loadLayouts();
         this.loadPartials();
     }
-    generate(type, options) {
+    initLocales() {
+        if (this.options.locales == null)
+            return;
+        debug('i18n settings: %o', this.options.locales);
+        i18n.configure(this.options.locales);
+    }
+    generate(type, options, { locale = 'en' }) {
+        i18n.setLocale(locale);
         const descriptor = this.config[type];
         let params;
         let layout;
@@ -91,14 +108,14 @@ class NodeHtmlEmails {
         Object.keys(this.layouts).forEach(tplKey => {
             this.layouts[tplKey] = Handlebars.compile(this.layouts[tplKey]);
         });
-        debug(`Email layouts: ${Object.keys(this.layouts).join(', ')}`);
+        debug(`Layouts: ${Object.keys(this.layouts).join(', ')}`);
     }
     loadPartials() {
         this.load(this.partials, this.options.partials);
         Object.keys(this.partials).forEach(prtlKey => {
             Handlebars.registerPartial(prtlKey, this.partials[prtlKey]);
         });
-        debug(`Email partials: ${Object.keys(this.partials).join(', ')}`);
+        debug(`Partials: ${Object.keys(this.partials).join(', ')}`);
     }
     load(cache, options) {
         const globOptions = {};

@@ -1,1 +1,1 @@
-src/core.css
+core.css

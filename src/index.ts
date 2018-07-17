@@ -2,4 +2,4 @@
 
 import NodeHtmlEmails from './node-html-emails';
 
-export default NodeHtmlEmails;
+module.exports = NodeHtmlEmails;

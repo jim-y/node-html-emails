@@ -13,7 +13,8 @@ mkdir -p dist
 
 # copying assets
 # TODO later maybe use chokidar and watch for these files too
-cat scripts/copy-assets.txt | tr -d '\r' | xargs -I@ sh -c 'rsync -Rr @ dist/'
+cd src
+cat ../scripts/copy-assets.txt | tr -d '\r' | xargs -I@ sh -c 'rsync -Rr @ ../dist/'
 
 # Copying handlebars (.hbs) templates
 # rsync -a --include="*/" --include="*.hbs" --exclude="*" srv_mailer/api/email/ dist/srv_mailer/api/email/ --prune-empty-dirs
@@ -21,4 +22,5 @@ cat scripts/copy-assets.txt | tr -d '\r' | xargs -I@ sh -c 'rsync -Rr @ dist/'
 # Copying handlebars custom css
 # rsync -a --include="*/" --include="*.css" --exclude="*" srv_mailer/api/email/ dist/srv_mailer/api/email/ --prune-empty-dirs
 
+cd ..
 ./node_modules/.bin/tsc $1

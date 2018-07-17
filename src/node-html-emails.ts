@@ -6,30 +6,53 @@ import * as juice from 'juice';
 import * as glob from 'glob';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as debug from 'debug';
+import * as debugCb from 'debug';
 
 import * as nhe from './types/types';
 
-debug('node-html-emails');
+const debug = debugCb('node-html-emails');
 
 export default class NodeHtmlEmails {
 
   private layouts = {};
   private partials = {};
   private coreCss = fs.readFileSync(path.join(__dirname, './core.css'));
+  
+  protected defaultOptions: nhe.Options = {
+      layouts: {
+          pattern: '*.layout.hbs'
+      },
+      partials: {
+          pattern: '*.partial.hbs'
+      }
+  }
+
+  private options: nhe.Options;
 
   constructor(
     private config: any,
-    private options: nhe.Options
+    private _options: nhe.Options
   ) {
+    this.options = Object.assign(_options, this.defaultOptions);
+    this.initLocales();
     this.registerHelpers();
     this.loadLayouts();
     this.loadPartials();
   }
 
-  generate(type, options) {
-    const descriptor = this.config[type];
+  private initLocales() {
+      if (this.options.locales == null) return;
 
+      debug('i18n settings: %o', this.options.locales);
+      
+      i18n.configure(this.options.locales);
+  }
+
+  generate(type, options, { locale = 'en' }) {
+    i18n.setLocale(locale);
+
+    const descriptor = this.config[type];
+    
     let params;
     let layout;
     let partials: any = {};
@@ -121,7 +144,7 @@ export default class NodeHtmlEmails {
       this.layouts[tplKey] = Handlebars.compile(this.layouts[tplKey]);
     });
 
-    debug(`Email layouts: ${Object.keys(this.layouts).join(', ')}`);
+    debug(`Layouts: ${Object.keys(this.layouts).join(', ')}`);
   }
 
   private loadPartials() {
@@ -131,7 +154,7 @@ export default class NodeHtmlEmails {
       Handlebars.registerPartial(prtlKey, this.partials[prtlKey]);
     });
 
-    debug(`Email partials: ${Object.keys(this.partials).join(', ')}`);
+    debug(`Partials: ${Object.keys(this.partials).join(', ')}`);
   }
 
   private load(cache, options) {
